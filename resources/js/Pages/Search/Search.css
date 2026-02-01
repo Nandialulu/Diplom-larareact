@@ -1,0 +1,113 @@
+.headerSearch{
+    height: 45px;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 10px 20px;
+    border-radius: 40px;
+
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    width: 100%;
+    max-width: 800px;
+    margin: auto;
+    gap:
+}
+
+.headerSearchItem{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.headerIcon{
+    color: gray;
+    font-size: 18px;
+}
+
+.headerSearchInput{
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 14px;
+}
+
+.headerSearchText{
+    color: gray;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.headerbtn{
+    background-color: rgb(48, 24, 0);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 60px;
+    cursor: pointer;
+}
+
+.headerbtn:hover{
+    background-color: gray;
+}
+.date{
+    position:absolute;
+    top:126px;
+}
+.options{
+ position: absolute;
+ top:126px;
+ background-color: white;
+ color: grey;
+ border-radius: 5px;
+ /* ahiad suuderleh */
+box-shadow: -1px 3px 7px -1px rgba(127,117,117,1);
+-webkit-box-shadow: -1px 3px 7px -1px rgba(127,117,117,1);
+-moz-box-shadow: -1px 3px 7px -1px rgba(127,117,117,1);
+
+}
+.optionItem{
+    width:220px;
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    margin:10px
+}
+.optionCounter{
+    display:flex;
+    align-items:center;
+    gap: 10px;
+    font-size: 14px;
+    color:black;
+}
+.optionText{
+   font-size: 14px; 
+   margin:20px
+}
+.optionCounterButton{
+    width:30px;
+    height:30px;
+    border: 0.5px solid black;
+    border-radius: 10px;
+    color: black;
+    cursor: pointer;
+    background-color: white;
+    font-size: 14px;
+}
+.optionCounterButton:disabled{
+    cursor: not-allowed;
+}
+.optionCounterNumber{
+    
+}
+@media(max-width:800px){
+    .headerSearch input{
+        width:80px;
+        font-size:10px;
+    }
+    .headerSearchItem{
+        display:none;
+    }
+
+}

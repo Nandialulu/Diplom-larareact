@@ -1,0 +1,12 @@
+.Title1{
+  margin: 16px;
+}
+.btn{
+    margin:16px;
+    background: black;
+    
+}
+.Listing-Grid{
+  display: grid;
+  gap: 24px;
+}

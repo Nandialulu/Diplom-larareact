@@ -1,0 +1,59 @@
+.Listing {
+  width: 260px;
+  font-family: sans-serif;
+  margin: 16px;
+}
+
+/* IMAGE WRAPPER */
+.Listing-img {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.Listing-img img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+}
+
+/* BADGE */
+.badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: #fff;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* HEART */
+.heart {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: white;
+}
+
+/* INFO */
+.Listing-Info {
+  margin-top: 10px;
+  font-size: 15px;
+}
+
+.Price {
+  font-size: 14px;
+  color: #555;
+}
+
+.Price span {
+  font-weight: 600;
+  color: #000;
+}
