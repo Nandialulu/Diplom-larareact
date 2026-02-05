@@ -1,12 +1,13 @@
-.Title1{
-  margin: 16px;
+.Title1 {
+  padding: 16px;
 }
-.btn{
-    margin:16px;
-    background: black;
-    
-}
-.Listing-Grid{
+
+.Listing-Grid {
   display: grid;
-  gap: 24px;
+  /* Lisitng 1 murund oruulj baigaa mun responsive */
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+.Title2{
+  padding: 16px;
 }

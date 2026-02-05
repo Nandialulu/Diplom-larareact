@@ -1,9 +1,8 @@
 .Listing {
-  width: 260px;
+  width:260px;
   font-family: sans-serif;
   margin: 16px;
 }
-
 /* IMAGE WRAPPER */
 .Listing-img {
   position: relative;
@@ -46,14 +45,32 @@
 .Listing-Info {
   margin-top: 10px;
   font-size: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.Price {
-  font-size: 14px;
-  color: #555;
+.title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.Price span {
+.title {
   font-weight: 600;
-  color: #000;
+}
+
+.star {
+  font-size: 14px;
+}
+
+.price {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+}
+
+.stock {
+  font-size: 13px;
+  color: green;
 }

@@ -13,10 +13,11 @@ export const Navbar=()=>{
             <Link href={'/service'}><div className='service'>Үйлчилгээ</div></Link>
         </div>
         <div className="Auth">
-            <div className="Host">Байр түрээслэх</div>
-             <Link href={'/login'}><div className="LogIn">Нэвтрэх</div></Link>
+            <Link href={'/become-host'}><div className="Host">Байр түрээслэх</div></Link>
+            <Link href={'/login'}><div className="LogIn">Нэвтрэх</div></Link>
             <Link href={'/register'}><div className="SignIn">Бүртгүүлэх</div></Link>
-         </div>
+         </div>   
+        
          </div>
          <div className='nav1'>
             <Search/>

@@ -1,33 +1,31 @@
 import '../Listing/Listing.css';
 
-export const Listing = ({Title,Categories = [],Location = [],Price,Star,Instock,Img}) => {
+export const Listing = ({Title, Categories = [],Location = [],Price,Star,Instock,Img}) => {
   return (
     <div className="Listing">
       <div className="Listing-img">
         <img src={Img} alt={Title} />
-
         <span className="badge">Guest favorite</span>
         <button className="heart">♡</button>
       </div>
-
-      {/* medeelel heseg */}
+      {/* medeelel heseg , nemj zaswarlah*/}
       <div className="Listing-Info">
-        <p>{Title}</p>
-        <p> {Categories.join(', ')}</p>
-        <p>{Location.join(', ')}</p>
-
-        <p className="Price">
-        <span>{Price}₮</span>
-        </p>
-        <p>★ {Star}</p>
-        <p>{Instock ? 'In stock' : 'Out of stock'}</p>
+      <div className="title-row">
+        <p className="title">{Title}</p>
+        <span className="star">★ {Star}</span>
       </div>
+
+      <p className="category">{Categories.join(', ')}</p>
+      <p className="location">{Location.join(', ')}</p>
+
+      <p className="price">
+        <span>{Price}₮</span>
+        <span className="stock">
+          {Instock ? 'In stock' : 'Out of stock'}
+        </span>
+      </p>
+    </div>
     </div>
   );
 };
-export const comment =()=>{
-  return {
-
-  }
-}
 export default Listing;

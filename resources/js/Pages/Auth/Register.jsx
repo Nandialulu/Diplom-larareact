@@ -28,7 +28,6 @@ export default function Register() {
             <form onSubmit={submit}>
                 <div>
                     <InputLabel htmlFor="name" value="Name" />
-
                     <TextInput
                         id="name"
                         name="name"
@@ -82,7 +81,7 @@ export default function Register() {
                         htmlFor="password_confirmation"
                         value="Confirm Password"
                     />
-
+                    
                     <TextInput
                         id="password_confirmation"
                         type="password"

@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\HostController;
 use Inertia\Inertia;
 
 Route::get('/', function () {
@@ -22,6 +23,17 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+// BecomeHost space
+Route::middleware(['auth'])->group(function () {
+    Route::get('/become-host', function () {
+        return Inertia::render('Auth/BecomeHost');
+    })->name('host.create');
+
+    Route::post('/become-host', [HostController::class, 'store'])
+        ->name('host.store');
+});
+
+
 
 Route::get('/welcome', function(){
     return Inertia::render('Welcome');
@@ -31,6 +43,9 @@ Route::get('/service',function(){
 });
 Route::get('/comment',function(){
     return Inertia::render('Comment/Comment');
+});
+Route::get('/hostDashBoard', function(){
+    return Inertia::render('hostDashBoard');
 });
 
 require __DIR__.'/auth.php';
