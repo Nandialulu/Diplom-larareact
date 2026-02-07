@@ -22,4 +22,5 @@ class AppServiceProvider extends ServiceProvider
     {
         Vite::prefetch(concurrency: 3);
     }
+    
 }

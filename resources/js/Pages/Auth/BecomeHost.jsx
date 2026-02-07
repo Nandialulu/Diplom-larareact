@@ -21,7 +21,7 @@ export default function BecomeHost() {
 
       <form onSubmit={submit}>
         <div>
-          <InputLabel value="Phone number" />
+          <InputLabel value="Утас" />
           <TextInput
             value={data.phone}
             onChange={e => setData('phone', e.target.value)}
@@ -29,7 +29,7 @@ export default function BecomeHost() {
         </div>
 
         <div className="mt-4">
-          <InputLabel value="Location" />
+          <InputLabel value="Байршил" />
           <TextInput
             value={data.location}
             onChange={e => setData('location', e.target.value)}
@@ -37,7 +37,7 @@ export default function BecomeHost() {
         </div>
 
         <PrimaryButton className="mt-4" disabled={processing}>
-          Become Host
+          Түрээслэгч болох
         </PrimaryButton>
       </form>
     </GuestLayout>

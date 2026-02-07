@@ -23,29 +23,43 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+
 // BecomeHost space
 Route::middleware(['auth'])->group(function () {
     Route::get('/become-host', function () {
         return Inertia::render('Auth/BecomeHost');
     })->name('host.create');
 
-    Route::post('/become-host', [HostController::class, 'store'])
+// Profile heseg, newtreegui bol loginruu usreh 
+Route::middleware('auth')->group(function(){
+    Route::get('/Profile', function(){
+        return Inertia::render('Profile/Edit');
+    });
+});  
+Route::post('/become-host', [HostController::class, 'store'])
         ->name('host.store');
 });
-
-
-
 Route::get('/welcome', function(){
     return Inertia::render('Welcome');
-});
+    // name('welcome) ni redirect()->route('welcome') duudne
+})->name('welcome');
 Route::get('/service',function(){
     return Inertia::render('Service/Service');
 });
 Route::get('/comment',function(){
     return Inertia::render('Comment/Comment');
 });
-Route::get('/hostDashBoard', function(){
-    return Inertia::render('hostDashBoard');
+// host controller 
+Route::controller(HostController::class)->group(function () {
+    Route::get(
+        'hostDashboard_CRUD/hostDashBoard',
+        'hostDashBoard'
+    )->name('host.Dashboard');
+    // Route::get(
+    //     'hostDashboard_CRUD/create',
+    // [HostController::class, 'create']
+    // );
 });
 
 require __DIR__.'/auth.php';

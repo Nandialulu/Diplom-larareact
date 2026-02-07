@@ -2,7 +2,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
 import React from 'react';
-import '../Pages/hostDashBoard.css';
+import "./hostDashBoard.css";
 import {Link} from '@inertiajs/react'
 import Footer from '@/Components/Footer/Footer';
 export default function HostDashboard() {

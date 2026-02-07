@@ -4,9 +4,20 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class HostController extends Controller
 {
+    
+     public function hostDashBoard()
+    {
+        return Inertia::render('hostDashboard_CRUD/hostDashBoard');
+
+    }
+    public function create(){
+        return Inertia::render('hostDashboard_CRUD/Create');
+    }
+    
     public function store(Request $request)
     {
          $validated = $request->validate([
@@ -19,6 +30,6 @@ class HostController extends Controller
         $user->phone = $validated['phone'];
         $user->location = $validated['location'];
         $user->save();
-        return redirect('/hostDashBoard');
+        return redirect()->route('host.Dashboard');
     }
 }
