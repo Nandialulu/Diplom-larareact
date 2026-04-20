@@ -10,12 +10,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Models\User;
+use App\Models\Listing;
+use App\Models\Review;
+use App\Models\Booking;
 
 class ProfileController extends Controller
 {
-    /**
-     * Display the user's profile form.
-     */
     public function edit(Request $request): Response
     {
         return Inertia::render('Profile/Edit', [
@@ -24,25 +25,6 @@ class ProfileController extends Controller
         ]);
     }
 
-    /**
-     * Update the user's profile information.
-     */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
-    {
-        $request->user()->fill($request->validated());
-
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
-        }
-
-        $request->user()->save();
-
-        return Redirect::route('profile.edit');
-    }
-
-    /**
-     * Delete the user's account.
-     */
     public function destroy(Request $request): RedirectResponse
     {
         $request->validate([
@@ -59,5 +41,48 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
+    }
+
+    public function updateMoreInfo(Request $request)
+    {
+        $user = $request->user();
+
+        $data = $request->all();
+
+        if ($request->hasFile('avatar')) {
+
+            if ($user->avatar && \Storage::disk('public')->exists($user->avatar)) {
+                \Storage::disk('public')->delete($user->avatar);
+            }
+
+            $path = $request->file('avatar')->store('avatars', 'public');
+
+            $data['avatar'] = $path;
+        }
+
+        $user->update($data);
+
+        return back()->with('success', 'Амжилттай хадгаллаа');
+    }
+
+
+     public function profile()
+    {
+        return Inertia::render('Host/profile');
+    }
+    public function dashboard()
+    {
+        $user = auth()->user();
+
+        $listings = Listing::all(); 
+        $reviews = Review::all();
+        $bookings = Booking::all();
+
+        return Inertia::render('admin/Dashboard', [
+            'auth' => ['user' => $user],
+            'listings' => $listings,
+            'reviews' => $reviews,
+            'bookings' => $bookings,
+        ]);
     }
 }

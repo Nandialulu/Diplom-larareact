@@ -25,10 +25,11 @@
     background-color: white;
     border-bottom: 0.5px solid rgba(117,111,111, 0.479);
     display:flex;
-    align-items:center;
-    justify-content: space-between;
+    align-items: center;      /* босоо төв */
+    justify-content: center;    /* hevtee*/
     padding:20px;
     box-sizing: border-box;
+    
 }
 .nav2{
     width: 100%;
@@ -48,7 +49,7 @@
   cursor: pointer;
   font-weight: 500;
 } 
-.LogIn, .SignIn{
+.LogIn, .SignIn, .Admin{
   cursor: pointer;
   font-weight: 500;
 }

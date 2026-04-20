@@ -11,21 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('listings', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            
-            $table->string('title');
-            $table->text('description');
-            $table->string('address');
+      Schema::create('listings', function (Blueprint $table) {
+        $table->id();
+        $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+        $table->string('title');
+        $table->text('description');
+        $table->string('address');
+        $table->decimal('price_per_day', 10, 2);
+        $table->integer('guest_number');
+        $table->integer('bedrooms');
+        $table->integer('bathrooms');
+        $table->string('image')->nullable(false);
+        $table->timestamps();
+});
 
-            $table->decimal('price_per_day', 10, 2);
-            $table->integer('guest_number');
-            $table->integer('bedrooms');
-            $table->integer('bathrooms');
-
-            $table->timestamps();
-        });
     }
 
     /**
@@ -33,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Scheme::dropIfExists('listings');
+        Schema::dropIfExists('listings');
     }
 };
