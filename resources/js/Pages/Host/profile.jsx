@@ -1,5 +1,5 @@
 import { Sidebar, Menu, MenuItem } from "react-pro-sidebar";
-import { Link } from "@inertiajs/react";
+import { Link, useForm } from "@inertiajs/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
@@ -8,6 +8,21 @@ import { Separator } from "@/components/ui/separator";
 
 export default function Dashboard({ auth, listings = [], reviews = [], bookings = [] }) {
   const [collapsed, setCollapsed] = useState(false);
+  const { data, setData, post, processing, errors } = useForm({
+  avatar: null,
+});
+const handleAvatarChange = (e) => {
+  setData("avatar", e.target.files[0]);
+};
+
+const submitAvatar = (e) => {
+  e.preventDefault();
+
+  post(route("profile.UpdateMoreInfo"), {
+    forceFormData: true,
+    preserveScroll: true,
+  });
+};
   const user = auth?.user;
 
   const avgRating =
@@ -52,38 +67,58 @@ console.log({ auth, listings, reviews, bookings });
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             {/* Profile */}
             <Card className="shadow-sm rounded-2xl">
-              <CardContent className="p-6 text-center">
-                <img
-                  src={
-                    user?.avatar
-                      ? `/storage/${user.avatar}`
-                      : "https://via.placeholder.com/120"
-                  }
-                  alt={user?.name || "User avatar"}
-                  className="object-cover w-24 h-24 mx-auto mb-4 border-4 border-white rounded-full shadow"
-                />
+  <CardContent className="p-6 text-center">
+    <img
+      src={
+        user?.avatar
+          ? `/storage/${user.avatar}`
+          : "https://via.placeholder.com/120"
+      }
+      alt={user?.name || "User avatar"}
+      className="object-cover w-24 h-24 mx-auto mb-4 border-4 border-white rounded-full shadow"
+    />
 
-                <h2 className="text-xl font-semibold text-slate-800">
-                  {user?.name || "Хэрэглэгч"}
-                </h2>
-                <p className="mt-1 text-sm text-slate-500">{user?.email}</p>
+    <h2 className="text-xl font-semibold text-slate-800">
+      {user?.name || "Хэрэглэгч"}
+    </h2>
+    <p className="mt-1 text-sm text-slate-500">{user?.email}</p>
 
-                <p className="mt-4 text-sm leading-6 text-slate-600">
-                  {user?.bio || "Одоогоор танилцуулга нэмээгүй байна."}
-                </p>
+    <p className="mt-4 text-sm leading-6 text-slate-600">
+      {user?.bio || "Одоогоор танилцуулга нэмээгүй байна."}
+    </p>
 
-                <Separator className="my-5" />
+    <Separator className="my-5" />
 
-                <div className="space-y-2 text-sm text-left text-slate-600">
-                  <p><span className="font-medium">Хэл:</span> {user?.language || "Мэдээлэл байхгүй"}</p>
-                  <p><span className="font-medium">Ажил:</span> {user?.job || "Мэдээлэл байхгүй"}</p>
-                </div>
+    <div className="space-y-2 text-sm text-left text-slate-600">
+      <p><span className="font-medium">Хэл:</span> {user?.language || "Мэдээлэл байхгүй"}</p>
+      <p><span className="font-medium">Ажил:</span> {user?.job || "Мэдээлэл байхгүй"}</p>
+    </div>
 
-                <Button asChild className="w-full mt-5">
-                  <Link href={route("profile.edit")}>Профайл мэдээлэл засах</Link>
-                </Button>
-              </CardContent>
-            </Card>
+    <form onSubmit={submitAvatar} className="mt-5 space-y-3">
+      <input
+        type="file"
+        accept="image/*"
+        onChange={handleAvatarChange}
+        className="block w-full text-sm text-slate-500
+                   file:mr-4 file:rounded-lg file:border-0
+                   file:bg-slate-100 file:px-4 file:py-2
+                   file:text-sm file:font-medium hover:file:bg-slate-200"
+      />
+
+      {errors.avatar && (
+        <p className="text-sm text-red-500 text-left">{errors.avatar}</p>
+      )}
+
+      <Button type="submit" className="w-full" disabled={processing}>
+        {processing ? "Түр хүлээнэ үү..." : "Профайл зураг хадгалах"}
+      </Button>
+    </form>
+
+    <Button asChild variant="outline" className="w-full mt-3">
+      <Link href={route("profile.edit")}>Профайл мэдээлэл засах</Link>
+    </Button>
+  </CardContent>
+</Card>
 
             {/* Right side */}
             <div className="space-y-6 lg:col-span-2">

@@ -28,21 +28,25 @@ class ListingController extends Controller
         'search' => $search,
     ]);
     }
+    // bairnuudiig home deer haruulah 
     public function home(){
         $listings = Listing::with('images')->paginate(10);
         return inertia::render('Home/Home', [
             'listings' => $listings
         ]);
     }
+    // bair uusgeh
     public function create()
     {
         return Inertia::render('Host/Create');
     }
+    // bair ustgah
     public function destroy($id){
         $listing=auth()->user()->listings()->findOrFail($id);
         $listing->delete();
         return redirect()->route('host.index')->with('success', ' Байр ажилттай устлаа');
     }
+    // update hiih ahiad harah
     public function update(Request $request, Listing $listing)
     {
         $listing->update($request->only([
@@ -62,7 +66,7 @@ class ListingController extends Controller
     $listing->save();
     return redirect()->route('host.index')->with('success', 'Байрны мэдээлэл амжилттай шинэчлэгдлээ');
     }
-
+//  ugugdliig shalgaad ugugdliin sand hadgalah
     public function store(Request $request)
     {
           if (!auth()->check()) {
@@ -94,76 +98,94 @@ class ListingController extends Controller
             ]);
         }
     }
-    $reviews = Review::with('listing_id', $listingId)->whereNotNull('published_at')->get(); 
+    $reviews = Review::with('listing_id', $listing->id)->whereNotNull('published_at')->get(); 
     return redirect()->route('host.index')->with('status', 'Амжилттай хадгалагдлаа');
     }
 
-public function show(Listing $listing){ 
-    $listing->load([
-        'user:id,name,avatar,job,language,bio',
-        'images',
-        'reviews' => function ($query) {
-            $query->whereNotNull('published_at')
-                ->with('user:id,name,avatar');
-        }
-    ]);
+// show function
+  public function show(Listing $listing)
+    {
+        $listing->load([
+    'user:id,name,avatar,job,language,bio',
+    'images',
+    'reviews' => function ($query) {
+        $query->latest()
+            ->with('user:id,name,avatar');
+    },
+    'bookings' => function ($query) {
+        $query->whereIn('booking_status', ['pending', 'confirmed'])
+            ->whereNull('cancelled_at')
+            ->whereDate('end_date', '>=', today());
+    }
+]);
+        $bookedDates = [];
 
-    return Inertia::render('Host/DetailPage', [
-        'listing' => $listing,
-        'host' => $listing->user,
-        'reviews' => $listing->reviews,
-    ]);
-}
+        foreach ($listing->bookings as $booking) {
+            $start = Carbon::parse($booking->start_date);
+            $end = Carbon::parse($booking->end_date)->copy()->subDay();
+
+            if ($start->lte($end)) {
+                $period = CarbonPeriod::create($start, $end);
+
+                foreach ($period as $date) {
+                    $bookedDates[] = $date->format('Y-m-d');
+                }
+            }
+        }
+        $listing->booked_dates = array_values(array_unique($bookedDates));
+        return Inertia::render('Host/DetailPage', [
+            'listing' => $listing,
+            'host' => $listing->user,
+            'reviews' => $listing->reviews,
+        ]);
+    }
+
+// bair zasvar hiih
     public function edit($id, Listing $listing){
        $listing= Listing::findOrFail($id);
        return inertia('Host/Edit', compact('listing'));
     }
         // tusdan controller uusgeh bsn 
     public function search(Request $request)
-    {
-        $lat = $request->lat;
-        $lng = $request->lng;
-
-        $query = Listing::with('images');
-
-        // 📍 Distance filter
-        if ($lat && $lng) {
-            $query->selectRaw("
-                listings.*,
-                (6371 * acos(
-                    cos(radians(?)) *
-                    cos(radians(lat)) *
-                    cos(radians(lng) - radians(?)) +
-                    sin(radians(?)) *
-                    sin(radians(lat))
-                )) AS distance
-            ", [$lat, $lng, $lat])
-            ->having('distance', '<', 10)
-            ->orderBy('distance', 'asc');
+        {
+            $lat = $request->lat;
+            $lng = $request->lng;
+            $query = Listing::with('images');
+            //Distance filter
+            if ($lat && $lng) {
+                $query->selectRaw("
+                    listings.*,
+                    (6371 * acos(
+                        cos(radians(?)) *
+                        cos(radians(lat)) *
+                        cos(radians(lng) - radians(?)) +    
+                        sin(radians(?)) *
+                        sin(radians(lat))
+                    )) AS distance
+                ", [$lat, $lng, $lat])     //radians(?) гэдэг нь user input-ийг шууд SQL string дотор оруулаагүй гэсэн үг.
+                ->having('distance', '<', 10)
+                ->orderBy('distance', 'asc');
         }
-
-        // 📅 Date filter
+        //Date filter
         if ($request->start_date && $request->end_date) {
             $start = $request->start_date;
             $end = $request->end_date;
-
+            // 
             $query->where(function ($q) use ($start, $end) {
                 $q->where('start_date', '<=', $end)
                 ->where('end_date', '>=', $start);
             });
         }
-
-        // 👥 Guest filter
+        //Guest filter
         if ($request->guest_number) {
             $query->where('guest_number', '>=', $request->guest_number);
         }
+            // Result
+            $listings = $query->paginate(10);
 
-        // 📦 Result
-        $listings = $query->paginate(10);
-
-        return Inertia::render('SearchResult', [
-            'listings' => $listings
-        ]);
+            return Inertia::render('SearchResult', [
+                'listings' => $listings
+            ]);
         }
         // ene c bas  zahialga, zahialgiin medeelel shalgah 
         public function booking(){
@@ -185,7 +207,7 @@ public function show(Listing $listing){
     public function review(){
         return Inertia::render('Host/Review');
     }
-    // admin hiih uildel 
+    // admin hiih uildel ыхүц
     public function pause($id)
     {
         $listing = auth()->user()->listings()->findOrFail($id);
@@ -212,13 +234,5 @@ public function show(Listing $listing){
 
         return back()->with('success', 'Listing татгалзлаа');
     }
-
-    // public function destroy($id)
-    // {
-    //     $listing = auth()->user()->listings()->findOrFail($id);
-    //     $listing->delete();
-
-    //     return redirect()->route('host.index')->with('success', 'Байр амжилттай устлаа');
-    // }
 }
 

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import {Card,CardContent,} from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
+
 export default function Checkout() {
   const { listing, from, to, adult } = usePage().props;
   const checkIn = parseISO(from);

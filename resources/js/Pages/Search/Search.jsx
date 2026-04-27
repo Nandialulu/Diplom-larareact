@@ -18,7 +18,7 @@ const LIBRARIES = ["places"]
 export default function Search() {
   const inputRef = useRef(null)
 
-  // ✅ controlled input
+  //controlled input
   const [searchText, setSearchText] = useState("")
   const [location, setLocation] = useState({ address: "", lat: null, lng: null })
   const [suggestions, setSuggestions] = useState([])
@@ -42,7 +42,7 @@ export default function Search() {
     libraries: LIBRARIES,
   })
 
-  // ✅ autocomplete
+  //autocomplete
   useEffect(() => {
     if (!isLoaded || !searchText) {
       setSuggestions([])
@@ -72,7 +72,7 @@ export default function Search() {
     return () => clearTimeout(delayDebounce)
   }, [searchText, isLoaded])
 
-  // ✅ suggestion click
+  // suggestion click
   const handleSelectSuggestion = (s) => {
     if (!window.google) return
 
@@ -93,7 +93,7 @@ export default function Search() {
           lng: place.geometry.location.lng(),
         })
 
-        setSearchText(address) // 🔥 хамгийн чухал
+        setSearchText(address) //хамгийн чухал
         setShowSuggestions(false)
       }
     })
@@ -131,7 +131,7 @@ export default function Search() {
     )
   }
 
-  // ✅ outside click → dropdown hide
+  //outside click → dropdown hide
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (!inputRef.current?.parentElement.contains(e.target)) {

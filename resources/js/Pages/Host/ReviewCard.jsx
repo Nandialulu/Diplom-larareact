@@ -2,14 +2,16 @@ import { Card, CardContent } from "@/Components/ui/card";
 import { Star } from "lucide-react";
 
 export default function ReviewCard({ review }) {
-  const userName = review?.user?.name || "Anonymous";
-  const avatar = review?.user?.avatar
-    ? `/storage/${review.user.avatar}`
-    : "/default-avatar.png";
 
+  const userName = review?.user?.name || "Нэргүй";
+  // zurag
+const avatar = review?.user?.avatar
+  ? `/storage/${review.user.avatar}`
+  : "/default-avatar.png";
+    // rating tootsooloh
   const rating = Number(review?.rating || 0);
   const fullStars = Math.floor(rating);
-
+  console.log(review);
   return (
     <Card className="border border-gray-200 rounded-2xl shadow-none hover:shadow-md transition-all duration-300 bg-white">
       <CardContent className="p-5">
@@ -54,7 +56,6 @@ export default function ReviewCard({ review }) {
             </span>
           )}
         </div>
-
         <p className="mt-4 text-[15px] leading-6 text-gray-700">
           {review?.comment}
         </p>

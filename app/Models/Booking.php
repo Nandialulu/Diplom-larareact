@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\User;
 use App\Models\Listing;
 use App\Models\payment;
+use App\Models\Review;
+
 class Booking extends Model
 {
     use HasFactory, SoftDeletes;
@@ -36,7 +38,7 @@ class Booking extends Model
     }
     
     public function listing(){
-        return $this->belongsTo(Listing::class);
+        return $this->belongsTo(Listing::class, 'listing_id');
     }
     public function payment(){
         return $this->hasOne(payment::class);

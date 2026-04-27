@@ -2,16 +2,7 @@ import { Sidebar, Menu, MenuItem } from "react-pro-sidebar";
 import { usePage, Link, router } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { useState } from "react";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import {Table,TableBody,TableCaption, TableCell,TableFooter,TableHead,TableHeader,TableRow,} from "@/components/ui/table";
 import axios from "axios";
 
 export default function BookingInfo({ auth }) {
@@ -150,29 +141,29 @@ export default function BookingInfo({ auth }) {
                               )}
                             </div>
                           </TableCell>
+                            <TableCell className="min-w-[180px]">
+                              <div className="flex flex-col gap-2">
 
-                          <TableCell className="min-w-[180px]">
-                            <div className="flex flex-col gap-2">
-                              <button
-                                onClick={() => startChat(booking.user?.id)}
-                                disabled={!booking.user?.id}
-                                className={`px-3 py-1 rounded text-white ${
-                                  booking.user?.id
-                                    ? "bg-blue-500 hover:bg-blue-600"
-                                    : "bg-gray-300 cursor-not-allowed"
-                                }`}
-                              >
-                                Chat эхлүүлэх
-                              </button>
+                                <button
+                                  onClick={() => startChat(booking.user?.id)}
+                                  disabled={!booking.user?.id}
+                                  className={`px-3 py-1 rounded text-white ${
+                                    booking.user?.id
+                                      ? "bg-blue-500 hover:bg-blue-600"
+                                      : "bg-gray-300 cursor-not-allowed"
+                                  }`}
+                                >
+                                  Chat эхлүүлэх
+                                </button>
 
-                              <button
-                                onClick={() => router.visit(route("host.Review"))}
-                                className="bg-black text-white px-3 py-1 rounded"
-                              >
-                                Сэтгэгдэл харах
-                              </button>
-                            </div>
-                          </TableCell>
+                                <button
+                                onClick={() => router.visit(route("reviews.show", booking.id))}
+                                  className="bg-black text-white px-3 py-1 rounded hover:bg-gray-800"
+                                >
+                                  Сэтгэгдэл бичих
+                                </button>
+                              </div>
+                            </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>

@@ -53,7 +53,7 @@ const roleName = user?.role?.name ?? user?.role ?? null;
                <Link href={route("host.create")}>
                 <div className="Host">Байр түрээслэх</div>
                 </Link>
-              <Link href={route("host.dashboard")}>
+              <Link href={route("dashboard")}>
                 <div className="Profile">
                       <Avatar className="h-7 w-7">
                     <AvatarImage className= ''

@@ -1,23 +1,21 @@
 import { usePage, Link } from "@inertiajs/react";
 import { useMemo, useState } from "react";
-import { format, differenceInCalendarDays } from "date-fns";
 import Navbar from "@/Components/Navbar/Navbar";
 import { Card, CardContent } from "@/Components/ui/card";
-import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/Components/ui/button";
-import {Popover,PopoverContent, PopoverTrigger,} from "@/components/ui/popover";
-import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger,} from "@/components/ui/dialog";
-import ReviewCard from "@/Pages/Host/ReviewCard";
+import {Dialog,DialogContent,DialogHeader,DialogTitle,DialogTrigger,} from "@/components/ui/dialog";
+import { Star } from "lucide-react";
+import AvailableTime from "./AvailableTime";
+import ReviewCard from "./ReviewCard";
 
 export default function DetailPage() {
-  const { listing, host, auth, reviews } = usePage().props;
-  const isLoggedIn = !!auth?.user;
+  const { listing, host} = usePage().props;
 
   const [selectedImage, setSelectedImage] = useState(0);
 
   const [date, setDate] = useState({
-    from: new Date(),
-    to: new Date(),
+    from: undefined,
+    to: undefined,
   });
 
   const [options, setOptions] = useState({
@@ -50,29 +48,29 @@ export default function DetailPage() {
     return [];
   }, [listing]);
 
-  const nights =
-    date?.from && date?.to
-      ? Math.max(differenceInCalendarDays(date.to, date.from), 1)
-      : 1;
-
-  const totalPrice = nights * Number(listing?.price_per_day || 0);
-
   if (!listing) {
     return <div className="p-6">Байр олдсонгүй</div>;
   }
-const avgRating =
-  reviews?.length > 0
-    ? (
-        reviews.reduce((sum, r) => sum + r.rating, 0) /
-        reviews.length
-      ).toFixed(1)
-    : 0;
+const reviews = listing.reviews || [];
+  const avgRating =
+    reviews.length > 0
+      ? (
+          reviews.reduce((sum, r) => sum + Number(r.rating || 0), 0) /
+          reviews.length
+        ).toFixed(1)
+      : 0;
+  const fullStars = Math.floor(avgRating);
+  // backend-ээс ирэх захиалгатай өдрүүд
+  // жишээ: ["2026-04-21", "2026-04-22", "2026-04-28"]
+  const bookedDates = listing?.booked_dates || [];
+console.log("listing", listing);
+console.log("booked_dates", listing?.booked_dates);
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
-
       <div className="max-w-6xl px-4 py-6 mx-auto">
-        <h1 className="mb-4 text-3xl font-medium">{listing.title}</h1>
+        {/* байршилаар авах засах */}
+        <h1 className="mb-4 text-2xl font-medium">{listing.title}</h1>
 
         {imageUrls.length > 0 ? (
           <div className="space-y-4">
@@ -110,7 +108,7 @@ const avgRating =
         <div className="grid gap-8 mt-8 md:grid-cols-3">
           <div className="space-y-8 md:col-span-2">
             <section>
-              <h2 className="text-2xl font-semibold">{listing.description}</h2>
+              {/* <h2 className="text-2xl font-semibold">{listing.description}</h2> */}
               <p className="mt-3 text-gray-600">
                 {listing.guest_number} зочин • {listing.bedrooms} унтлагын өрөө •{" "}
                 {listing.bathrooms} угаалгын өрөө
@@ -118,7 +116,7 @@ const avgRating =
             </section>
 
             <div className="border-b" />
-  {/* about host */}
+
             <section>
               <h2 className="text-xl font-semibold">
                 Түрээслүүлэгч {host?.name}
@@ -129,8 +127,9 @@ const avgRating =
                   src={
                     host?.avatar
                       ? `/storage/${host.avatar}`
-                      : "https://ui-avatars.com/api/?name=" + host?.name
+                      : `https://ui-avatars.com/api/?name=${host?.name || "Host"}`
                   }
+                  alt={host?.name}
                   className="w-16 h-16 rounded-full"
                 />
 
@@ -144,10 +143,13 @@ const avgRating =
                 {host?.bio || "Био байхгүй байна"}
               </p>
             </section>
+
             <div className="border-b" />
 
             <section>
-              <h2 className="mb-3 text-xl font-medium"> Байрны нэмэлт мэдээлэл үйлчилгээ</h2>
+              <h2 className="mb-3 text-xl font-medium">
+                Байрны нэмэлт мэдээлэл үйлчилгээ
+              </h2>
 
               <Dialog>
                 <DialogTrigger asChild>
@@ -156,7 +158,9 @@ const avgRating =
 
                 <DialogContent className="max-w-lg">
                   <DialogHeader>
-                    <DialogTitle> Байрны нэмэлт мэдээлэл болон үйлчилгээ.</DialogTitle>
+                    <DialogTitle>
+                      Байрны нэмэлт мэдээлэл болон үйлчилгээ
+                    </DialogTitle>
                   </DialogHeader>
 
                   <div className="max-h-[50vh] overflow-y-auto space-y-3 pr-2">
@@ -172,136 +176,51 @@ const avgRating =
             </section>
 
             <div className="border-b" />
-
+            <div className="border-b" />
+            {/* Reviewcard import hiih zasah */}
             <section>
-              <h2 className="mb-3 text-xl font-medium">Аяллын  хугацаа</h2>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" className="justify-start w-full md:w-auto">
-                    {date?.from ? format(date.from, "yyyy-MM-dd") : "Эхлэх өдөр"} -{" "}
-                    {date?.to ? format(date.to, "yyyy-MM-dd") : "Дуусах өдөр"}
-                  </Button>
-                </PopoverTrigger>
+              <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                <span>Сэтгэгдэл ({reviews.length})</span>
 
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="range"
-                    selected={date}
-                    onSelect={setDate}
-                    numberOfMonths={2}
-                  />
-                </PopoverContent>
-              </Popover>
-            </section>
-{/* setgegdel heseg */}
-       <section>
-        <h2 className="text-xl font-semibold">
-          {avgRating} · {reviews?.length} сэтгэгдэл
-        </h2>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {reviews.map((review) => (
-          <ReviewCard key={review.id} review={review} />
-        ))}
-      </div>
-      </section>
-          </div>
-
-          <div>
-            <Card className="sticky shadow-lg top-6 rounded-2xl">
-              <CardContent className="p-6 space-y-5">
-                <div className="text-2xl font-bold">
-                  {listing.price_per_day}₮
-                  <span className="text-sm font-normal text-gray-500"> / шөнө</span>
-                </div>
-
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className="justify-start w-full">
-                      {date?.from ? format(date.from, "yyyy-MM-dd") : "Эхлэх өдөр"} -{" "}
-                      {date?.to ? format(date.to, "yyyy-MM-dd") : "Дуусах өдөр"}
-                    </Button>
-                  </PopoverTrigger>
-
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar
-                      mode="range"
-                      selected={date}
-                      onSelect={setDate}
-                      numberOfMonths={2}
+                <div className="flex items-center gap-1">
+                  {[...Array(5)].map((_, index) => (
+                    <Star
+                      key={index}
+                      size={14}
+                      className={`${
+                        index < fullStars ? "fill-black text-black" : "text-gray-300"
+                      }`}
                     />
-                  </PopoverContent>
-                </Popover>
-
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className="justify-start w-full">
-                      {options.adult} Том хүн • {options.children} Хүүхэд • {options.room} Өрөө
-                    </Button>
-                  </PopoverTrigger>
-
-                  <PopoverContent className="w-72 space-y-4">
-                    {["adult", "children", "room"].map((item) => (
-                      <div key={item} className="flex items-center justify-between">
-                        <span className="capitalize">
-                          {item === "adult"
-                            ? "Том хүн"
-                            : item === "children"
-                            ? "Хүүхэд"
-                            : "Өрөө"}
-                        </span>
-                        <div className="flex items-center gap-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            disabled={
-                              options[item] <=
-                              (item === "adult" || item === "room" ? 1 : 0)
-                            }
-                            onClick={() => handleOption(item, "d")}
-                          >
-                            −
-                          </Button>
-                          <span className="w-6 text-center">{options[item]}</span>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleOption(item, "i")}
-                          >
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </PopoverContent>
-                </Popover>
-
-                <div className="pt-2 space-y-2 text-sm text-gray-600 border-t font-medium">
-                  <div className="flex justify-between">
-                    <span>
-                      {listing.price_per_day}₮ × {nights} шөнө
-                    </span>
-                    <span>{totalPrice}₮</span>
-                  </div>
-                  <div className="flex justify-between font-semibold text-black">
-                    <span>Нийт</span>
-                    <span>{totalPrice}₮</span>
-                  </div>
+                  ))}
+                  <span className="text-sm font-medium ml-1">{avgRating}</span>
                 </div>
+              </h2>
 
-                <Link
-                  href={route("host.booking", {
-                    id: listing.id,
-                    from: date?.from ? format(date.from, "yyyy-MM-dd") : "",
-                    to: date?.to ? format(date.to, "yyyy-MM-dd") : "",
-                    adult: options.adult,
-                    children: options.children,
-                    room: options.room,
-                  })}
-                >
-                  <Button className="w-full">Захиалах</Button>
-                </Link>
+              {reviews.length === 0 ? (
+                <p className="text-gray-500">Сэтгэгдэл байхгүй байна</p>
+              ) : (
+                <div className="space-y-4">
+                  {reviews.map((review) => (
+                    <ReviewCard key={review.id} review={review} />
+                  ))}
+                </div>
+              )}
+            </section>
+          </div>
+          <div>
+
+            {/* bolomjtoi hongiig haruulah */}
+            <CardContent className="p-6 space-y-5">
+             <AvailableTime
+                listing={listing}
+                date={date}
+                setDate={setDate}
+                bookedDates={bookedDates}
+                pricePerDay={listing.price_per_day}
+                options={options}
+                setOptions={setOptions}
+              />
               </CardContent>
-            </Card>
           </div>
         </div>
       </div>

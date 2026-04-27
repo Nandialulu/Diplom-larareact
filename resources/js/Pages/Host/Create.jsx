@@ -16,13 +16,13 @@ import { Calendar } from "@/components/ui/calendar";
 import MainLayout from "@/Layouts/MainLayout"
 export default function Create({ auth }) {
   const [isSubmitting, setSubmitting] = useState(false);
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed] = useState(false);
   const [markers, setMarkers] = useState([]);
   const [date, setDate] = useState({
     from: null,
     to: null,
   });
-
+ 
   const [formData, setFormData] = useState({
     title: "",
     category: "",
@@ -146,8 +146,8 @@ export default function Create({ auth }) {
           </Menu>
         </Sidebar>
 
-        <div className="flex-1 p-6 flex flex-col gap-4">
-          <Card>
+        <div className="flex-1 p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Card className="h-full">
             <CardHeader>
               <CardTitle>Байрны мэдээлэл</CardTitle>
             </CardHeader>
@@ -307,7 +307,7 @@ export default function Create({ auth }) {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="h-full">
             <div>
               <Map markers={markers} onMapClick={handleMapClick} />
               {markers.length > 0 && (

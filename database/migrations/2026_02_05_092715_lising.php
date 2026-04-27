@@ -24,9 +24,7 @@ return new class extends Migration
         $table->string('image')->nullable(false);
         $table->timestamps();
 });
-
     }
-
     /**
      * Reverse the migrations.
      */

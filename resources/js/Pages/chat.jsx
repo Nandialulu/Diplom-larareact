@@ -74,7 +74,7 @@ export default function Chat() {
                     className="border flex-1 p-2 rounded"
                 />
                 <button className="bg-blue-500 text-white px-4 rounded">
-                    Send
+                    Илгээх
                 </button>
             </form>
         </div>

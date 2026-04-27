@@ -18,6 +18,8 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ConversationController;
 use App\Models\Message;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\DashboardController;
+
 
 Route::get('/categories/{id}', [CategoryController::class, 'show'])->name('categories.show');
 Route::middleware(['auth', AdminMiddleware::class])->prefix('admin')->name('admin.')->group(function () {
@@ -56,7 +58,7 @@ Route::get('/dashboard', function () {
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::patch('/profile/more-info', [ProfileController::class, 'UpdateMoreInfo'])->name('profile.UpdateMoreInfo');
+    Route::post('/profile/more-info', [ProfileController::class, 'UpdateMoreInfo'])->name('profile.UpdateMoreInfo');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
@@ -125,6 +127,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/booking/{booking}/confirmation', [BookingController::class, 'confirmation'])->name('booking.confirmation');
         //  upload state machine 
     Route::patch('/host/bookings/{booking}/status',[BookingController::class, 'updateStatus'])->name('host.bookings.updateStatus');
+    Route::get('/booking/{id}', [BookingController::class, 'showBookingCard'])->name('booking.card');
+    // bookeddates hide hiih
+    Route::get('/listings/{id}/booked-dates', [BookingController::class, 'bookedDates'])
+    ->name('listings.bookedDates');
 });
 
 Route::middleware(['auth'])->prefix('guest')->name('guest.')->group(function(){
@@ -154,3 +160,6 @@ Route::middleware('auth')->group(function () {
 
 Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
 Route::get('/review/{booking}', [ReviewController::class, 'show'])->name('reviews.show');
+Route::get('/reviews', [ReviewController::class, 'index'])->middleware(['auth'])->name('host.Review');
+
+Route::get('/dashboard', [DashboardController::class, 'dashboard'])->middleware(['auth'])->name('dashboard');

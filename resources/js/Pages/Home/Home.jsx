@@ -1,5 +1,5 @@
 import React from "react";
-import { usePage, Link, router } from "@inertiajs/react";
+import { usePage, Link} from "@inertiajs/react";
 import ListingCard from "../Host/ListingCard";
 import DefaultLayout from "@/Layouts/DefaultLayout";
 import {Swiper, SwiperSlide} from "swiper/react";

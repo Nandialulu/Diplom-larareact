@@ -38,7 +38,8 @@ class Listing extends Model
         return $this->hasMany(ListingImage::class, 'listing_id');
     }
     public function bookings(){
-        return $this->hasMany(Booking::class);
+        // listing_id awah
+        return $this->hasMany(Booking::class, 'listing_id');
     }
 
     public function isAvailable($startDate, $endDate): bool{
@@ -58,6 +59,9 @@ class Listing extends Model
     public function host()
     {
     return $this->belongsTo(User::class, 'user_id');
+    }
+    public function availabilities(){
+        return $this->hasMany(ListingAvailability::class);
     }
 }
 

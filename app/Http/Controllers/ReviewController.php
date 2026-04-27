@@ -5,96 +5,132 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Review;
-use Carbon\Carbon;
 use App\Models\Booking;
+use Carbon\Carbon;
 
 class ReviewController extends Controller
 {
-public function store(Request $request)
+    public function store(Request $request)
+    {
+        $request->validate([
+            'listing_id' => 'required|exists:listings,id',
+            'booking_id' => 'required|exists:bookings,id',
+            'rating' => 'required|integer|min:1|max:5',
+            'comment' => 'nullable|string|max:1000',
+        ]);
+
+        $booking = Booking::with('listing')->findOrFail($request->booking_id);
+        $userId = auth()->id();
+
+        $isGuest = $userId == $booking->user_id;
+        $isHost = $userId == $booking->listing->user_id;
+
+        if (!$isGuest && !$isHost) {
+            abort(403);
+        }
+
+        $checkoutDate = $booking->checkout_date ?? $booking->end_date;
+
+        if (now()->gt(Carbon::parse($checkoutDate)->addDays())) {
+            return back()->withErrors([
+                'msg' => 'Review бичих хугацаа дууссан байна.'
+            ]);
+        }
+
+        $exists = Review::where('booking_id', $booking->id)
+            ->where('user_id', $userId)
+            ->exists();
+
+        if ($exists) {
+            return back()->withErrors([
+                'msg' => 'Та аль хэдийн сэтгэгдэл бичсэн байна.'
+            ]);
+        }
+        $type = $isGuest ? 'guest_to_host' : 'host_to_guest';
+        Review::create([
+            'user_id' => $userId,
+            'listing_id' => $booking->listing_id,
+            'booking_id' => $booking->id,
+            'rating' => $request->rating,
+            'comment' => $request->comment,
+            'type' => $type,
+            'published_at' => null,
+        ]);
+        $this->publishIfReady($booking->id);
+        return back()->with('success', 'Сэтгэгдэл амжилттай хадгалагдлаа.');
+    }
+        private function publishIfReady($bookingId)
+        {
+            $booking = Booking::findOrFail($bookingId);
+            $reviews = Review::where('booking_id', $bookingId)->get();
+
+            if ($reviews->count() >= 2) {
+                Review::where('booking_id', $bookingId)
+                    ->update(['published_at' => now()]);
+                return;
+            }
+
+            $checkoutDate = $booking->checkout_date ?? $booking->end_date;
+
+            if (now()->gt(Carbon::parse($checkoutDate)->addDays())) {
+                Review::where('booking_id', $bookingId)
+                    ->whereNull('published_at')
+                    ->update(['published_at' => now()]);
+            }
+        }
+    // host, guest setgegdel bichih
+        public function show(Booking $booking)
+        {
+            // load hiih
+            $booking->load([
+                'listing',
+                'listing.host',
+                'user',
+                'reviews.user'
+            ]);
+            // render hiih
+            return Inertia::render('Review/Show', [
+                'booking' => $booking,
+                'reviews' => $booking->reviews()
+                    ->with('user')
+                    ->latest()
+                    ->get(),
+                'auth' => auth()->user(),
+            ]);
+        }
+    public function guestReview()
+    {
+        $userId = auth()->id();
+
+        $reviews = Review::with(['user', 'listing', 'booking'])
+            ->whereHas('booking', function ($query) use ($userId) {
+                $query->where('user_id', $userId);
+            })
+            ->where('type', 'host_to_guest')
+            ->latest()
+            ->get();
+
+        return Inertia::render('Guest/Review', [
+            'reviews' => $reviews,
+            'auth' => [
+                'user' => auth()->user(),
+            ],
+        ]);
+    }
+public function hostReview()
 {
-    $request->validate([
-        'listing_id' => 'required',
-        'booking_id' => 'required',
-        'rating' => 'required|integer|min:1|max:5',
+    $hostId = auth()->id();
+
+    $reviews = Review::with(['user', 'listing', 'booking'])
+        ->where('type', 'guest_to_host')
+        ->whereHas('listing', function ($query) use ($hostId) {
+            $query->where('user_id', $hostId);
+        })
+        ->latest()
+        ->get();
+
+    return Inertia::render('Host/Review', [
+        'reviews' => $reviews,
     ]);
-
-    $booking = Booking::findOrFail($request->booking_id);
-
-    // Энэ booking-д хамааралтай хүн мөн үү?
-    if (!in_array(auth()->id(), [$booking->user_id, $booking->host_id])) {
-        abort(403);
-    }
-
-    //  хоногийн шалгалт одоогоор өдөр тооцоогүй
-    if (now()->gt(Carbon::parse($booking->checkout_date)->addDays())) {
-        return back()->withErrors(['msg' => 'Review хугацаа дууссан']);
-    }
-
-    //  Давхар review хийхгүй
-    $exists = Review::where('booking_id', $booking->id)
-        ->where('user_id', auth()->id())
-        ->exists();
-
-    if ($exists) {
-        return back()->withErrors(['msg' => 'Та аль хэдийн review бичсэн байна']);
-    }
-
-    //  Type тодорхойлох
-    $type = auth()->id() == $booking->user_id
-        ? 'guest_to_host'
-        : 'host_to_guest';
-
-    // Review хадгалах (publish хийхгүй!)
-    $review = Review::create([
-        'user_id'=> auth()->id(),
-        'listing_id' => $request->listing_id,
-        'booking_id' => $request->booking_id,
-        'rating' => $request->rating,
-        'comment' => $request->comment,
-        'type' => $type,
-        'published_at' => null
-    ]);
-
-    //Blind publish шалгах
-    $this->publishIfReady($booking->id);
-
-    return back()->with('success', 'Амжилттай');
 }
-    private function publishIfReady($bookingId)
-    {
-        $reviews = Review::where('booking_id', $bookingId)->get();
-
-        //  Хоёулаа бичсэн бол
-        if ($reviews->count() == 2) {
-            foreach ($reviews as $r) {
-                $r->update(['published_at' => now()]);
-            }
-            return;
-        }
-
-        //  14 хоног болсон бол ганцыг publish
-        $booking = Booking::find($bookingId);
-
-        if (now()->gt(
-            Carbon::parse($booking->checkout_date)->addDays()
-        )) {
-            foreach ($reviews as $r) {
-                if (!$r->published_at) {
-                    $r->update(['published_at' => now()]);
-                }
-            }
-        }
-    }
-      public function show(Booking $booking)
-    {
-        $booking->load([
-            'listing',
-            'reviews.user'
-        ]);
-        return Inertia::render('Review/Show', [
-        'booking' => $booking,
-        'reviews' => $booking->reviews,
-        'auth' => auth()->user(),
-        ]);
-    }
 }
