@@ -10,7 +10,7 @@ export default function UpdateMoreInfo({
 }) {
     const user = usePage().props.auth.user;
 
-    const { data, setData, patch, errors, processing, recentlySuccessful } =
+    const { data, setData, post, errors, processing, recentlySuccessful } =
         useForm({
             bio: user.bio || '',
             language: user.language || '',
@@ -18,7 +18,7 @@ export default function UpdateMoreInfo({
         });
     const submit = (e) => {
         e.preventDefault();
-        patch(route('profile.UpdateMoreInfo'));
+        post(route('profile.UpdateMoreInfo'));
     };
 
     return (

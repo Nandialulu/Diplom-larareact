@@ -1,12 +1,12 @@
 import { Sidebar, Menu, MenuItem } from "react-pro-sidebar";
-import { usePage, Link } from "@inertiajs/react";
+import { usePage, Link, router } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { useState } from "react";
 import {Table,TableBody,TableCaption,TableCell,TableHead,TableHeader,TableRow,} from "@/components/ui/table";
 import axios from "axios";
 
 export default function Mybooking({ auth }) {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed] = useState(false);
   const { bookings = [] } = usePage().props;
 
   const bookingList = Array.isArray(bookings) ? bookings : bookings?.data || [];
@@ -69,21 +69,28 @@ export default function Mybooking({ auth }) {
   const canStartChat = (booking) => {
     return !!booking.listing?.user_id && booking.booking_status !== "cancelled";
   };
-
+// review bichih
   const canReview = (booking) => {
-    const ended = new Date(booking.end_date) < new Date();
     const validStatus =
       booking.booking_status === "confirmed" ||
       booking.booking_status === "completed";
 
-    return ended && validStatus;
+    return validStatus;
   };
-
   const formatDate = (date) => {
     if (!date) return "-";
     return new Date(date).toLocaleDateString("mn-MN");
   };
+  const cancelBooking = (booking) => {
+    if (!confirm("Та энэ захиалгыг цуцлахдаа итгэлтэй байна уу?")) return;
 
+    router.post(`/guest/bookings/${booking.id}/cancel`, {}, {
+      preserveScroll: true,
+      onSuccess: () => {
+        router.reload({ only: ["bookings"] });
+      },
+    });
+  };
   return (
     <AuthenticatedLayout
       user={auth.user}
@@ -164,6 +171,15 @@ export default function Mybooking({ auth }) {
 
                           <TableCell className="min-w-[180px]">
                             <div className="flex flex-col gap-2">
+                              {/* setgegdel bichih heseg */}
+                              {canReview(booking) && (
+                                <button
+                                  onClick={() => openReview(booking)}
+                                  className="px-3 py-2 rounded text-sm text-white bg-black hover:bg-gray-800"
+                                >
+                                  Сэтгэгдэл бичих
+                                </button>
+                              )}
                               <button
                                 onClick={() => startChat(booking.listing?.user_id)}
                                 disabled={!canStartChat(booking)}
@@ -175,15 +191,15 @@ export default function Mybooking({ auth }) {
                               >
                                 Chat эхлүүлэх
                               </button>
-
-                              {canReview(booking) && (
-                                <button
-                                  onClick={() => openReview(booking)}
-                                  className="px-3 py-2 rounded text-sm text-white bg-black hover:bg-gray-800"
-                                >
-                                  Сэтгэгдэл бичих
-                                </button>
-                              )}
+                                {booking.booking_status !== "cancelled" &&
+                                  booking.booking_status !== "completed" && (
+                                    <button
+                                      onClick={() => cancelBooking(booking)}
+                                      className="px-3 py-2 rounded text-sm text-white bg-red-600 hover:bg-red-700"
+                                    >
+                                      Захиалга цуцлах
+                                    </button>
+                                )}
                             </div>
                           </TableCell>
                         </TableRow>

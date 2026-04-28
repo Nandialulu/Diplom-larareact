@@ -12,11 +12,10 @@ export default function Show() {
   const [comment, setComment] = useState("");
 
   // login user
-  const userId = auth.id;
+const userId = auth?.user?.id;
 
-  // role check
-  const isGuest = userId === booking.user_id;
-  const isHost = userId === booking.listing.host?.id;
+const isGuest = Number(userId) === Number(booking.user_id);
+const isHost = Number(userId) === Number(booking.listing?.user_id);
 
   const submit = (e) => {
     e.preventDefault();

@@ -30,8 +30,8 @@ class ReviewController extends Controller
         }
 
         $checkoutDate = $booking->checkout_date ?? $booking->end_date;
-
-        if (now()->gt(Carbon::parse($checkoutDate)->addDays())) {
+// 
+        if (now()->gt(Carbon::parse($checkoutDate)->addDays(1))) {
             return back()->withErrors([
                 'msg' => 'Review бичих хугацаа дууссан байна.'
             ]);
@@ -79,25 +79,35 @@ class ReviewController extends Controller
             }
         }
     // host, guest setgegdel bichih
-        public function show(Booking $booking)
-        {
-            // load hiih
-            $booking->load([
-                'listing',
-                'listing.host',
-                'user',
-                'reviews.user'
-            ]);
-            // render hiih
-            return Inertia::render('Review/Show', [
-                'booking' => $booking,
-                'reviews' => $booking->reviews()
-                    ->with('user')
-                    ->latest()
-                    ->get(),
-                'auth' => auth()->user(),
-            ]);
-        }
+    public function show(Booking $booking)
+{
+    $booking->load([
+        'listing',
+        'listing.user',
+        'user',
+        'reviews.user'
+    ]);
+
+    $userId = auth()->id();
+
+    $isGuest = $userId == $booking->user_id;
+    $isHost = $userId == $booking->listing->user_id;
+
+    if (!$isGuest && !$isHost) {
+        abort(403);
+    }
+
+    return Inertia::render('Review/Show', [
+        'booking' => $booking,
+        'reviews' => $booking->reviews()
+            ->with('user')
+            ->latest()
+            ->get(),
+        'auth' => [
+            'user' => auth()->user(),
+        ],
+    ]);
+}
     public function guestReview()
     {
         $userId = auth()->id();

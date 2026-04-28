@@ -70,7 +70,7 @@ console.log("booked_dates", listing?.booked_dates);
       <Navbar />
       <div className="max-w-6xl px-4 py-6 mx-auto">
         {/* байршилаар авах засах */}
-        <h1 className="mb-4 text-2xl font-medium">{listing.title}</h1>
+        <h1 className="mb-4 text-2xl font-medium">{listing.location}</h1>
 
         {imageUrls.length > 0 ? (
           <div className="space-y-4">
@@ -133,10 +133,21 @@ console.log("booked_dates", listing?.booked_dates);
                   className="w-16 h-16 rounded-full"
                 />
 
+               <div className="space-y-2 mt-3">
                 <div>
-                  <p className="font-medium">{host?.job || "Мэдээлэл алга"}</p>
-                  <p className="text-sm text-gray-500">{host?.language}</p>
+                  <span className="text-sm text-gray-500">Мэргэжил:</span>
+                  <p className="font-medium">
+                    {host?.job || "Мэдээлэл алга"}
+                  </p>
                 </div>
+
+                <div>
+                  <span className="text-sm text-gray-500">Хэлний мэдлэг:</span>
+                  <p className="font-medium">
+                    {host?.language || "Мэдээлэл алга"}
+                  </p>
+                </div>
+              </div>
               </div>
 
               <p className="mt-4 text-gray-600">

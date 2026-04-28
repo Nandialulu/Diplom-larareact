@@ -16,17 +16,9 @@ export default function Review({ auth, reviews = [] }) {
         {/* SIDEBAR */}
         <Sidebar collapsed={collapsed} className="border-r bg-white shadow-md">
           <Menu className="font-medium">
-            <MenuItem>
-              <Link href={route("guest.Dashboard")}>Үндсэн хэсэг</Link>
-            </MenuItem>
-
-            <MenuItem>
-              <Link href={route("guest.Mybooking")}>Миний захиалга</Link>
-            </MenuItem>
-
-            <MenuItem>
-              <Link href={route("guest.Review")}>Сэтгэгдэл</Link>
-            </MenuItem>
+            <MenuItem><Link href={route("guest.Dashboard")}>Үндсэн хэсэг</Link></MenuItem>
+            <MenuItem><Link href={route("guest.Mybooking")}>Миний захиалга</Link></MenuItem>
+            <MenuItem><Link href={route("guest.Review")}>Сэтгэгдэл</Link></MenuItem>
           </Menu>
         </Sidebar>
 

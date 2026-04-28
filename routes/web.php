@@ -95,6 +95,10 @@ Route::middleware(['auth'])->prefix('host')->name('host.')->group(function () {
 
 Route::middleware(['auth'])->prefix('guest')->name('guest.')->group(function () {
     Route::get('/dashboard', [GuestController::class, 'dashboard'])->name('dashboard');
+
+    Route::post('/bookings/{id}/cancel', [GuestController::class, 'cancelBooking'])
+        ->name('booking.cancel');
+
     Route::get('/profile', [UserController::class, 'profile'])->name('profile');
 });
 

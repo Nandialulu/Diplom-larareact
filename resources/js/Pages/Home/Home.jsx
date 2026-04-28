@@ -4,7 +4,6 @@ import ListingCard from "../Host/ListingCard";
 import DefaultLayout from "@/Layouts/DefaultLayout";
 import {Swiper, SwiperSlide} from "swiper/react";
 import { Navigation } from "swiper/modules";
-
 import "swiper/css";
 import "swiper/css/navigation";
 
@@ -38,21 +37,11 @@ export default function Home() {
               spaceBetween={16}
               slidesPerView={1.2}
               breakpoints={{
-                640: {
-                  slidesPerView: 2.2,
-                },
-                768: {
-                  slidesPerView: 3.2,
-                },
-                1024: {
-                  slidesPerView: 4.2,
-                },
-                1280: {
-                  slidesPerView: 5.2,
-                },
-                1536: {
-                  slidesPerView: 6.2,
-                },
+                640: {slidesPerView: 2.2,},
+                768: { slidesPerView: 3.2,},
+                1024: {slidesPerView: 4.2,},
+                1280: { slidesPerView: 5.2,},
+                1536: {slidesPerView: 6.2, },
               }}
           >
               {categoryListings.map((listing) => (

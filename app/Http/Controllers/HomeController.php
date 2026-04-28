@@ -10,7 +10,7 @@ class HomeController extends Controller
 {
     public function index(){
         $listings = Listing::with('images')->withAvg('reviews','rating')->withCount('reviews')->get();
-
+        // засах монголоор орчуулах
         $categories = [
         ['id' => 1, 'name' => 'apartment'],
         ['id' => 2, 'name' => 'house'],
@@ -21,7 +21,6 @@ class HomeController extends Controller
         ['id' => 7, 'name' => 'New'],
         ['id' => 8, 'name' => 'other'],
     ];
-
         return Inertia::render('Home/Home', [
             'listings' => $listings,
             'categories' => $categories,
